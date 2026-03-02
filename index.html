@@ -1,697 +1,965 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AILeverage — Coming Soon</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Leverage Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f7f6f3;
+  --ink: #111;
+  --soft: #888;
+  --muted: #bbb;
+  --rule: #e0deda;
+  --white: #fff;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono: 'Geist Mono', 'Courier New', monospace;
+}
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-weight: 300;
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  height: 56px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule);
+}
+.logo { font-size: 12px; letter-spacing: 0.08em; color: var(--ink); text-decoration: none; cursor: pointer; }
+.nav-center { display: flex; gap: 0; }
+.nav-link {
+  font-size: 11px; letter-spacing: 0.06em; color: var(--soft);
+  padding: 0 20px; height: 56px; display: flex; align-items: center;
+  cursor: pointer; border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s; text-decoration: none;
+  margin-bottom: -1px;
+}
+.nav-link:hover { color: var(--ink); }
+.nav-link.active { color: var(--ink); border-bottom-color: var(--ink); }
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.nav-status { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--soft); }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: #3a3; animation: blink 2.5s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.35} }
+.nav-btn {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
+  padding: 7px 16px; border: 1px solid var(--rule); background: transparent;
+  color: var(--soft); cursor: pointer; text-decoration: none;
+  transition: all 0.15s; display: inline-flex; align-items: center;
+}
+.nav-btn:hover { border-color: var(--ink); color: var(--ink); }
 
-    :root {
-      --gold: #c9a84c;
-      --gold-light: #e8c97a;
-      --gold-dim: #7a5e28;
-      --black: #050507;
-      --white: #f4f0e8;
-      --grey: #1a1a1f;
-      --grey-mid: #2e2e38;
-      --text-muted: #6b6b7a;
-    }
+/* ── PAGE CONTAINER ── */
+#app { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
 
-    html { scroll-behavior: smooth; }
+/* ── SHARED LAYOUT ── */
+.hero {
+  padding: 80px 48px 64px;
+  border-bottom: 1px solid var(--rule);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: end;
+}
+.hero-full { grid-template-columns: 1fr; max-width: 720px; }
+.hero h1 {
+  font-family: var(--serif); font-size: clamp(44px,5.5vw,80px); font-weight: 400;
+  line-height: 1.05; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 28px;
+}
+.hero h1 em { font-style: italic; color: var(--soft); }
+.hero-desc { font-size: 14px; line-height: 1.8; color: var(--soft); margin-bottom: 36px; }
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  padding: 10px 22px; text-decoration: none; border: 1px solid var(--rule);
+  color: var(--soft); background: transparent; cursor: pointer;
+  transition: all 0.15s; display: inline-block;
+}
+.btn:hover { border-color: var(--ink); color: var(--ink); }
+.btn-fill { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn-fill:hover { background: #333; color: var(--bg); border-color: #333; }
 
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: 'Cormorant Garamond', serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+/* ── STATS BAR ── */
+.stats { display: grid; border-bottom: 1px solid var(--rule); }
+.stats-5 { grid-template-columns: repeat(5,1fr); }
+.stats-4 { grid-template-columns: repeat(4,1fr); }
+.stats-3 { grid-template-columns: repeat(3,1fr); }
+.stat { padding: 28px 48px; border-right: 1px solid var(--rule); }
+.stat:last-child { border-right: none; }
+.stat-val { font-family: var(--serif); font-size: 30px; font-weight: 400; color: var(--ink); display: block; line-height: 1; margin-bottom: 6px; }
+.stat-label { font-size: 10px; letter-spacing: 0.1em; color: var(--soft); text-transform: uppercase; }
 
-    /* Noise texture overlay */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.028;
-      pointer-events: none;
-      z-index: 1000;
-    }
+/* ── SECTION LAYOUT ── */
+.section { display: grid; grid-template-columns: 200px 1fr; border-bottom: 1px solid var(--rule); }
+.section-aside { padding: 56px 48px; border-right: 1px solid var(--rule); }
+.section-num { font-size: 10px; letter-spacing: 0.15em; color: var(--muted); display: block; margin-bottom: 10px; }
+.section-title { font-family: var(--serif); font-size: 17px; font-weight: 400; color: var(--ink); }
+.section-body { padding: 56px 64px; }
 
-    /* Grid lines */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
-      background-size: 80px 80px;
-      pointer-events: none;
-      z-index: 0;
-    }
+/* ── ARCH DIAGRAM ── */
+.arch { display: flex; align-items: center; margin-bottom: 48px; }
+.arch-node { flex: 1; text-align: center; }
+.arch-box { display: inline-block; padding: 9px 14px; border: 1px solid var(--rule); font-size: 11px; letter-spacing: 0.06em; color: var(--ink); background: var(--bg); }
+.arch-box.active { border-color: var(--ink); }
+.arch-label { font-size: 9px; letter-spacing: 0.1em; color: var(--soft); text-transform: uppercase; margin-top: 8px; display: block; }
+.arch-arrow { font-size: 12px; color: var(--muted); flex-shrink: 0; width: 20px; text-align: center; }
 
-    /* Glowing orb */
-    .orb {
-      position: fixed;
-      width: 700px; height: 700px;
-      background: radial-gradient(circle at center,
-        rgba(201,168,76,0.08) 0%,
-        rgba(201,168,76,0.03) 35%,
-        transparent 70%);
-      border-radius: 50%;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      animation: orbPulse 8s ease-in-out infinite;
-      z-index: 0;
-    }
+/* ── FEATURES ── */
+.features { display: grid; grid-template-columns: 1fr 1fr; }
+.feature { padding: 28px 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 150px 1fr; gap: 20px; align-items: start; }
+.feature:nth-last-child(-n+2) { border-bottom: none; }
+.feature:nth-child(odd) { padding-right: 40px; border-right: 1px solid var(--rule); }
+.feature:nth-child(even) { padding-left: 40px; }
+.feature-title { font-size: 11px; letter-spacing: 0.08em; color: var(--ink); padding-top: 2px; text-transform: uppercase; }
+.feature-desc { font-size: 12px; line-height: 1.75; color: var(--soft); }
 
-    @keyframes orbPulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-      50% { transform: translate(-50%, -50%) scale(1.12); opacity: 0.7; }
-    }
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; }
+thead th { text-align: left; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); padding-bottom: 14px; border-bottom: 1px solid var(--rule); font-weight: 400; }
+tbody td { padding: 14px 0; border-bottom: 1px solid var(--rule); font-size: 12px; color: var(--ink); }
+tbody tr:last-child td { border-bottom: none; }
+.tdsoft { color: var(--soft); }
+.status-cell { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--soft); }
 
-    /* Main layout */
-    .page {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-    }
+/* ── CODE BLOCK ── */
+.code-wrap { background: var(--white); border: 1px solid var(--rule); padding: 32px; margin-top: 36px; }
+.code-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); margin-bottom: 20px; display: block; }
+pre { font-family: var(--mono); font-size: 12px; line-height: 1.9; color: var(--ink); overflow-x: auto; }
+.cm { color: #ccc; } .ck { color: #555; } .cs { color: #888; } .cv { color: #111; }
 
-    /* Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2.5rem 4rem;
-      opacity: 0;
-      animation: fadeSlideDown 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-    }
+/* ── SLA GRID ── */
+.sla-grid { display: flex; gap: 0; }
+.sla-item { flex: 1; padding-right: 40px; border-right: 1px solid var(--rule); margin-right: 40px; }
+.sla-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+.sla-val { font-family: var(--serif); font-size: 34px; font-weight: 400; color: var(--ink); display: block; line-height: 1; margin-bottom: 7px; }
+.sla-label { font-size: 10px; letter-spacing: 0.1em; color: var(--soft); text-transform: uppercase; }
 
-    @keyframes fadeSlideDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+/* ── PROSE ── */
+.prose { max-width: 600px; }
+.prose p { font-size: 13px; line-height: 1.85; color: var(--soft); margin-bottom: 20px; }
+.prose p:last-child { margin-bottom: 0; }
+.prose h3 { font-family: var(--serif); font-size: 20px; font-weight: 400; color: var(--ink); margin-bottom: 14px; margin-top: 36px; }
+.prose h3:first-child { margin-top: 0; }
+.prose ul { list-style: none; margin-bottom: 20px; }
+.prose ul li { font-size: 13px; line-height: 1.85; color: var(--soft); padding-left: 16px; position: relative; }
+.prose ul li::before { content: '—'; position: absolute; left: 0; color: var(--muted); }
 
-    .logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.25rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--white);
-    }
-    .logo span { color: var(--gold); }
+/* ── STATUS PAGE ── */
+.status-grid { display: flex; flex-direction: column; gap: 0; }
+.status-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid var(--rule); }
+.status-row:last-child { border-bottom: none; }
+.status-name { font-size: 12px; color: var(--ink); }
+.status-region { font-size: 10px; letter-spacing: 0.08em; color: var(--soft); text-transform: uppercase; margin-top: 2px; }
+.status-pill { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border: 1px solid; }
+.pill-green { color: #2a7a2a; border-color: #c0ddc0; background: #f0f7f0; }
+.pill-yellow { color: #7a6a1a; border-color: #ddd0a0; background: #faf8e8; }
+.pill-red { color: #7a2a2a; border-color: #ddc0c0; background: #f7f0f0; }
+.uptime-bar { display: flex; gap: 2px; margin-top: 6px; }
+.uptime-tick { width: 4px; height: 20px; background: var(--rule); border-radius: 1px; }
+.uptime-tick.ok { background: #3a3; }
+.uptime-tick.warn { background: #ca3; }
+.uptime-tick.down { background: #c33; }
+.incident-list { margin-top: 0; }
+.incident { padding: 20px 0; border-bottom: 1px solid var(--rule); }
+.incident:last-child { border-bottom: none; }
+.incident-date { font-size: 10px; letter-spacing: 0.1em; color: var(--soft); text-transform: uppercase; margin-bottom: 6px; }
+.incident-title { font-size: 13px; color: var(--ink); margin-bottom: 6px; }
+.incident-body { font-size: 12px; line-height: 1.7; color: var(--soft); }
 
-    .header-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      border: 1px solid var(--grey-mid);
-      padding: 0.4rem 0.8rem;
-      border-radius: 2px;
-    }
+/* ── DOCS PAGE ── */
+.docs-layout { display: grid; grid-template-columns: 200px 1fr; min-height: calc(100vh - 57px); }
+.docs-sidebar { border-right: 1px solid var(--rule); padding: 40px 0; position: sticky; top: 57px; align-self: start; height: calc(100vh - 57px); overflow-y: auto; }
+.docs-sidebar-group { margin-bottom: 32px; }
+.docs-sidebar-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); padding: 0 28px; margin-bottom: 8px; display: block; }
+.docs-sidebar-link { display: block; font-size: 12px; color: var(--soft); padding: 6px 28px; cursor: pointer; transition: color 0.15s; text-decoration: none; }
+.docs-sidebar-link:hover { color: var(--ink); }
+.docs-sidebar-link.active { color: var(--ink); border-left: 2px solid var(--ink); margin-left: -2px; padding-left: 26px; }
+.docs-content { padding: 56px 64px; max-width: 760px; }
+.docs-content h1 { font-family: var(--serif); font-size: 40px; font-weight: 400; color: var(--ink); margin-bottom: 16px; line-height: 1.1; }
+.docs-content .tagline { font-size: 14px; color: var(--soft); line-height: 1.7; margin-bottom: 48px; }
+.docs-content h2 { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--ink); margin-bottom: 14px; margin-top: 48px; }
+.docs-content h3 { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin-bottom: 12px; margin-top: 32px; }
+.docs-content p { font-size: 13px; line-height: 1.85; color: var(--soft); margin-bottom: 16px; }
+.docs-content ul, .docs-content ol { padding-left: 0; list-style: none; margin-bottom: 16px; }
+.docs-content ul li, .docs-content ol li { font-size: 13px; line-height: 1.85; color: var(--soft); padding-left: 20px; position: relative; margin-bottom: 4px; }
+.docs-content ul li::before { content: '–'; position: absolute; left: 0; color: var(--muted); }
+.docs-content ol { counter-reset: ol; }
+.docs-content ol li { counter-increment: ol; }
+.docs-content ol li::before { content: counter(ol) '.'; position: absolute; left: 0; color: var(--muted); font-size: 11px; }
+.docs-content .inline-code { font-family: var(--mono); font-size: 12px; background: var(--white); border: 1px solid var(--rule); padding: 2px 7px; }
+.callout { background: var(--white); border: 1px solid var(--rule); border-left: 3px solid var(--ink); padding: 20px 24px; margin: 24px 0; }
+.callout-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--soft); margin-bottom: 8px; }
+.callout p { margin-bottom: 0; }
 
-    /* Hero section */
-    .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem 2rem 4rem;
-      position: relative;
-    }
+/* ── ABOUT ── */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: none; }
+.about-block { padding: 48px 64px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.about-block:nth-child(even) { border-right: none; }
+.about-block:nth-last-child(-n+2) { border-bottom: none; }
+.about-block h3 { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--ink); margin-bottom: 16px; }
+.about-block p { font-size: 13px; line-height: 1.85; color: var(--soft); }
+.team-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; }
+.team-member { padding: 32px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.team-member:nth-child(3n) { border-right: none; }
+.team-member:nth-last-child(-n+3) { border-bottom: none; }
+.team-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--rule); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.team-name { font-size: 13px; color: var(--ink); margin-bottom: 4px; }
+.team-role { font-size: 11px; letter-spacing: 0.06em; color: var(--soft); text-transform: uppercase; margin-bottom: 10px; }
+.team-bio { font-size: 12px; line-height: 1.7; color: var(--soft); }
 
-    .eyebrow {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      color: var(--gold);
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeIn 1s ease 0.6s forwards;
-    }
+/* ── PEERING PAGE ── */
+.peering-intro { max-width: 640px; font-size: 13px; line-height: 1.85; color: var(--soft); margin-bottom: 48px; }
+.peering-section { margin-bottom: 48px; }
+.peering-section h3 { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.req-list { display: flex; flex-direction: column; gap: 0; }
+.req-item { display: flex; gap: 24px; padding: 14px 0; border-bottom: 1px solid var(--rule); font-size: 12px; }
+.req-item:last-child { border-bottom: none; }
+.req-label { width: 160px; flex-shrink: 0; color: var(--soft); }
+.req-val { color: var(--ink); }
 
-    .eyebrow::before,
-    .eyebrow::after {
-      content: '';
-      width: 40px;
-      height: 1px;
-      background: var(--gold-dim);
-    }
+/* ── FOOTER ── */
+footer { border-top: 1px solid var(--rule); padding: 28px 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.footer-logo { font-size: 11px; letter-spacing: 0.08em; color: var(--ink); cursor: pointer; }
+.footer-links { list-style: none; display: flex; gap: 28px; }
+.footer-links li span { font-size: 11px; letter-spacing: 0.06em; color: var(--soft); cursor: pointer; transition: color 0.15s; }
+.footer-links li span:hover { color: var(--ink); }
+.footer-copy { font-size: 11px; color: var(--muted); }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .headline {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(4rem, 10vw, 9rem);
-      line-height: 0.92;
-      letter-spacing: -0.02em;
-      color: var(--white);
-      opacity: 0;
-      animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
-    }
-
-    .headline em {
-      font-style: italic;
-      color: var(--gold-light);
-    }
-
-    .headline .line-2 {
-      display: block;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      font-style: normal;
-      color: var(--white);
-    }
-
-    .subheadline {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-      font-weight: 300;
-      color: var(--text-muted);
-      max-width: 560px;
-      line-height: 1.6;
-      margin-top: 2.5rem;
-      opacity: 0;
-      animation: fadeIn 1s ease 1.2s forwards;
-    }
-
-    /* Divider ornament */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 3rem auto;
-      width: 200px;
-      opacity: 0;
-      animation: fadeIn 1s ease 1.4s forwards;
-    }
-
-    .divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-dim)); }
-    .divider-line:last-child { background: linear-gradient(90deg, var(--gold-dim), transparent); }
-    .divider-diamond {
-      width: 6px; height: 6px;
-      background: var(--gold);
-      transform: rotate(45deg);
-      flex-shrink: 0;
-    }
-
-    /* Email form */
-    .form-section {
-      opacity: 0;
-      animation: fadeIn 1s ease 1.6s forwards;
-      width: 100%;
-      max-width: 500px;
-    }
-
-    .form-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-      display: block;
-    }
-
-    .form-row {
-      display: flex;
-      border: 1px solid var(--grey-mid);
-      background: rgba(255,255,255,0.02);
-      backdrop-filter: blur(10px);
-      transition: border-color 0.3s;
-    }
-
-    .form-row:focus-within {
-      border-color: var(--gold-dim);
-      background: rgba(201,168,76,0.03);
-    }
-
-    .form-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      padding: 1rem 1.2rem;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      color: var(--white);
-    }
-
-    .form-input::placeholder { color: var(--text-muted); font-style: italic; }
-
-    .form-btn {
-      background: var(--gold);
-      border: none;
-      padding: 1rem 1.5rem;
-      font-family: 'Syne', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--black);
-      cursor: none;
-      transition: background 0.2s, transform 0.1s;
-      white-space: nowrap;
-    }
-
-    .form-btn:hover { background: var(--gold-light); }
-    .form-btn:active { transform: scale(0.98); }
-
-    .form-note {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.55rem;
-      color: var(--text-muted);
-      letter-spacing: 0.12em;
-      margin-top: 0.75rem;
-    }
-
-    /* Countdown */
-    .countdown-section {
-      display: flex;
-      gap: 2.5rem;
-      margin-top: 4rem;
-      opacity: 0;
-      animation: fadeIn 1s ease 1.8s forwards;
-    }
-
-    .count-item {
-      text-align: center;
-      position: relative;
-    }
-
-    .count-item::after {
-      content: ':';
-      position: absolute;
-      right: -1.4rem;
-      top: 0;
-      font-size: 2rem;
-      color: var(--gold-dim);
-      font-family: 'Cormorant Garamond', serif;
-    }
-
-    .count-item:last-child::after { display: none; }
-
-    .count-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: 3.5rem;
-      line-height: 1;
-      color: var(--white);
-      display: block;
-      min-width: 2.5ch;
-    }
-
-    .count-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.5rem;
-      letter-spacing: 0.2em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-top: 0.35rem;
-      display: block;
-    }
-
-    /* Floating data lines */
-    .data-streams {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      overflow: hidden;
-    }
-
-    .stream {
-      position: absolute;
-      top: -200px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.55rem;
-      color: rgba(201,168,76,0.12);
-      line-height: 1.8;
-      letter-spacing: 0.05em;
-      animation: streamFall linear infinite;
-      white-space: nowrap;
-    }
-
-    @keyframes streamFall {
-      from { transform: translateY(0); }
-      to { transform: translateY(120vh); }
-    }
-
-    /* Three pillars */
-    .pillars {
-      display: flex;
-      gap: 1px;
-      max-width: 900px;
-      margin: 5rem auto 0;
-      background: var(--grey-mid);
-      border: 1px solid var(--grey-mid);
-      opacity: 0;
-      animation: fadeIn 1s ease 2s forwards;
-    }
-
-    .pillar {
-      flex: 1;
-      background: var(--black);
-      padding: 2rem 1.8rem;
-      transition: background 0.4s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .pillar::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: var(--gold-dim);
-      transform: scaleX(0);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .pillar:hover { background: rgba(201,168,76,0.03); }
-    .pillar:hover::before { transform: scaleX(1); }
-
-    .pillar-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--gold);
-      letter-spacing: 0.15em;
-      margin-bottom: 1rem;
-    }
-
-    .pillar-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--white);
-      margin-bottom: 0.6rem;
-    }
-
-    .pillar-desc {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      font-weight: 300;
-      color: var(--text-muted);
-      line-height: 1.6;
-      font-style: italic;
-    }
-
-    /* Footer */
-    footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 2rem 4rem;
-      border-top: 1px solid var(--grey-mid);
-      opacity: 0;
-      animation: fadeIn 1s ease 2.2s forwards;
-    }
-
-    .footer-left {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      letter-spacing: 0.15em;
-    }
-
-    .footer-right {
-      display: flex;
-      gap: 2rem;
-    }
-
-    .footer-link {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      letter-spacing: 0.15em;
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-
-    .footer-link:hover { color: var(--gold); }
-
-    /* Floating corner accents */
-    .corner-accent {
-      position: fixed;
-      width: 60px; height: 60px;
-      pointer-events: none;
-      z-index: 5;
-      opacity: 0.3;
-    }
-
-    .corner-accent.tl { top: 20px; left: 20px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); }
-    .corner-accent.tr { top: 20px; right: 20px; border-top: 1px solid var(--gold); border-right: 1px solid var(--gold); }
-    .corner-accent.bl { bottom: 20px; left: 20px; border-bottom: 1px solid var(--gold); border-left: 1px solid var(--gold); }
-    .corner-accent.br { bottom: 20px; right: 20px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); }
-
-    /* Status indicator */
-    .status-dot {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--gold);
-      animation: dotPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes dotPulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(201,168,76,0.4); }
-      50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(201,168,76,0); }
-    }
-
-    /* Scan line effect on hover for headline */
-    .headline-wrap {
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Success state */
-    .success-msg {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--gold);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      display: none;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.8rem 0;
-    }
-
-    .success-msg.visible { display: flex; }
-
-    @media (max-width: 768px) {
-      header { padding: 1.5rem 1.5rem; }
-      footer { padding: 1.5rem 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
-      .footer-right { gap: 1.5rem; }
-      .hero { padding: 1rem 1.5rem 3rem; }
-      .headline { font-size: clamp(3rem, 14vw, 6rem); }
-      .pillars { flex-direction: column; gap: 1px; }
-      .countdown-section { gap: 1.5rem; }
-      .count-item::after { right: -0.9rem; }
-    }
-  </style>
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  nav{padding:0 24px;}
+  .nav-center{display:none;}
+  .hero{grid-template-columns:1fr;padding:48px 24px;}
+  .stats-5,.stats-4{grid-template-columns:repeat(2,1fr);}
+  .stat{padding:20px 24px;}
+  .section{grid-template-columns:1fr;}
+  .section-aside{padding:32px 24px 0;border-right:none;}
+  .section-body{padding:24px;}
+  .features{grid-template-columns:1fr;}
+  .feature:nth-child(odd){border-right:none;padding-right:0;}
+  .feature:nth-child(even){padding-left:0;}
+  .feature:nth-last-child(-n+2){border-bottom:1px solid var(--rule);}
+  .feature:last-child{border-bottom:none;}
+  .sla-grid{flex-direction:column;gap:24px;}
+  .sla-item{border-right:none;margin-right:0;padding-right:0;}
+  footer{padding:24px;flex-direction:column;align-items:flex-start;}
+  .docs-layout{grid-template-columns:1fr;}
+  .docs-sidebar{display:none;}
+  .docs-content{padding:32px 24px;}
+  .team-grid{grid-template-columns:1fr 1fr;}
+  .about-grid{grid-template-columns:1fr;}
+  .about-block{border-right:none;border-bottom:1px solid var(--rule);}
+  .about-block:last-child{border-bottom:none;}
+}
+</style>
 </head>
 <body>
 
-  <div class="orb"></div>
+<nav>
+  <span class="logo" onclick="navigate('home')">aileverage.network</span>
+  <div class="nav-center">
+    <span class="nav-link" data-page="home" onclick="navigate('home')">Overview</span>
+    <span class="nav-link" data-page="docs" onclick="navigate('docs')">Docs</span>
+    <span class="nav-link" data-page="peering" onclick="navigate('peering')">Peering</span>
+    <span class="nav-link" data-page="status" onclick="navigate('status')">Status</span>
+    <span class="nav-link" data-page="about" onclick="navigate('about')">About</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-status"><span class="dot"></span>All systems operational</div>
+    <span class="nav-btn" onclick="navigate('docs')">Get connected →</span>
+  </div>
+</nav>
 
-  <!-- Floating data streams -->
-  <div class="data-streams" id="dataStreams"></div>
+<div id="app"></div>
 
-  <!-- Corner accents -->
-  <div class="corner-accent tl"></div>
-  <div class="corner-accent tr"></div>
-  <div class="corner-accent bl"></div>
-  <div class="corner-accent br"></div>
+<footer>
+  <span class="footer-logo" onclick="navigate('home')">aileverage.network</span>
+  <ul class="footer-links">
+    <li><span onclick="navigate('docs')">Documentation</span></li>
+    <li><span onclick="navigate('status')">Status</span></li>
+    <li><span onclick="navigate('peering')">Peering policy</span></li>
+    <li><span onclick="navigate('about')">About</span></li>
+  </ul>
+  <span class="footer-copy">© 2026 AI Leverage Network · Upstream infrastructure for Aeplo Cloud</span>
+</footer>
 
-  <div class="page">
-    <header>
-      <div class="logo">AI<span>Leverage</span></div>
-      <div class="header-tag status-dot">
-        <span class="dot"></span>
-        Building in progress
+<script>
+// ── PAGES ──────────────────────────────────────────────────
+
+function pageHome() {
+  return `
+  <div class="hero">
+    <div class="hero-left">
+      <h1>Upstream P2P<br>network for<br><em>Aeplo Cloud</em></h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-desc">aileverage.network is the upstream peer-to-peer backbone powering Aeplo Cloud — handling intelligent workload routing, dynamic capacity sharing, and resilient multi-node orchestration across 23 global regions.</p>
+      <div class="hero-ctas">
+        <span class="btn btn-fill" onclick="navigate('docs')">Integration docs</span>
+        <span class="btn" onclick="navigate('peering')">Peering policy</span>
       </div>
-    </header>
-
-    <main class="hero">
-      <div class="eyebrow">The Future of AI Education</div>
-
-      <div class="headline-wrap">
-        <h1 class="headline">
-          <em>Master</em><br>
-          <span class="line-2">Automation.</span>
-        </h1>
-      </div>
-
-      <p class="subheadline">
-        We're crafting something extraordinary — a platform where AI automation 
-        becomes your most powerful competitive advantage.
-      </p>
-
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-diamond"></div>
-        <div class="divider-line"></div>
-      </div>
-
-      <div class="form-section">
-        <label class="form-label" for="email-input">Secure early access</label>
-        <div class="form-row">
-          <input
-            class="form-input"
-            id="email-input"
-            type="email"
-            placeholder="your@email.com"
-          />
-          <button class="form-btn" onclick="handleSubmit()">Notify Me</button>
-        </div>
-        <div id="successMsg" class="success-msg">
-          <span>✦</span>
-          Access secured — we'll be in touch
-        </div>
-        <p class="form-note" id="formNote">No spam. First access guaranteed to early subscribers.</p>
-      </div>
-
-      <div class="countdown-section">
-        <div class="count-item">
-          <span class="count-num" id="days">00</span>
-          <span class="count-label">Days</span>
-        </div>
-        <div class="count-item">
-          <span class="count-num" id="hours">00</span>
-          <span class="count-label">Hours</span>
-        </div>
-        <div class="count-item">
-          <span class="count-num" id="minutes">00</span>
-          <span class="count-label">Minutes</span>
-        </div>
-        <div class="count-item">
-          <span class="count-num" id="seconds">00</span>
-          <span class="count-label">Seconds</span>
-        </div>
-      </div>
-
-      <div class="pillars">
-        <div class="pillar">
-          <div class="pillar-num">01 / Foundations</div>
-          <div class="pillar-title">AI Literacy</div>
-          <p class="pillar-desc">Understand the mechanics of modern intelligence — from LLMs to agents.</p>
-        </div>
-        <div class="pillar">
-          <div class="pillar-num">02 / Systems</div>
-          <div class="pillar-title">Automation Architecture</div>
-          <p class="pillar-desc">Build workflows that compound — systems that work while you sleep.</p>
-        </div>
-        <div class="pillar">
-          <div class="pillar-num">03 / Leverage</div>
-          <div class="pillar-title">Scale & Deploy</div>
-          <p class="pillar-desc">Turn knowledge into measurable ROI for your business or career.</p>
-        </div>
-      </div>
-    </main>
-
-    <footer>
-      <div class="footer-left">© 2026 AILeverage. All rights reserved.</div>
-      <div class="footer-right">
-        <a href="#" class="footer-link">Privacy</a>
-        <a href="#" class="footer-link">Terms</a>
-        <a href="#" class="footer-link">Contact</a>
-      </div>
-    </footer>
+    </div>
   </div>
 
-  <script>
-    // Data streams
-    const streamData = [
-      'model.invoke(prompt)', 'accuracy: 98.7%', 'tokens: 4096',
-      'workflow.deploy()', 'agent.run()', 'pipeline.execute()',
-      'ROI: +340%', 'automation.status: active', 'latency: 120ms',
-      'llm.chain(tasks)', 'output.stream()', 'context.window: 200k',
-      'task.complete()', 'inference.time: 0.8s', 'cost.optimize()',
-    ];
+  <div class="stats stats-5">
+    <div class="stat"><span class="stat-val">847</span><span class="stat-label">Active nodes</span></div>
+    <div class="stat"><span class="stat-val">2.4 Tbps</span><span class="stat-label">Peak throughput</span></div>
+    <div class="stat"><span class="stat-val">11 ms</span><span class="stat-label">P99 latency</span></div>
+    <div class="stat"><span class="stat-val">23</span><span class="stat-label">Regions</span></div>
+    <div class="stat"><span class="stat-val">99.997%</span><span class="stat-label">Uptime</span></div>
+  </div>
 
-    const streamsContainer = document.getElementById('dataStreams');
-    for (let i = 0; i < 10; i++) {
-      const stream = document.createElement('div');
-      stream.className = 'stream';
-      stream.style.left = (i * 10 + Math.random() * 5) + '%';
-      stream.style.animationDuration = (12 + Math.random() * 10) + 's';
-      stream.style.animationDelay = (-Math.random() * 15) + 's';
-      const lines = [];
-      for (let j = 0; j < 20; j++) {
-        lines.push(streamData[Math.floor(Math.random() * streamData.length)]);
-      }
-      stream.innerHTML = lines.join('<br>');
-      streamsContainer.appendChild(stream);
-    }
+  <div class="section" id="infrastructure">
+    <div class="section-aside">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Infrastructure</h2>
+    </div>
+    <div class="section-body">
+      <div class="arch">
+        <div class="arch-node"><div class="arch-box">Aeplo Cloud</div><span class="arch-label">Consumer</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node"><div class="arch-box active">AI Leverage Gateway</div><span class="arch-label">Upstream interface</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node"><div class="arch-box active">P2P Core Mesh</div><span class="arch-label">aileverage.network</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node"><div class="arch-box">Peer Nodes</div><span class="arch-label">Edge / Compute</span></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node"><div class="arch-box">AI Endpoints</div><span class="arch-label">Model inference</span></div>
+      </div>
+      <div class="features">
+        <div class="feature"><span class="feature-title">Distributed routing</span><p class="feature-desc">Requests dynamically assigned to the lowest-latency capable peer with available compute budget.</p></div>
+        <div class="feature"><span class="feature-title">Zero-trust peering</span><p class="feature-desc">Mutual TLS authentication across every connection. Every packet is cryptographically verified at the edge.</p></div>
+        <div class="feature"><span class="feature-title">Adaptive capacity</span><p class="feature-desc">Real-time capacity negotiation absorbs burst traffic by recruiting idle nodes across regions.</p></div>
+        <div class="feature"><span class="feature-title">Sub-15ms relay</span><p class="feature-desc">UDP fast-path with selective retransmit delivers consistent low latency across all tier-1 regions.</p></div>
+        <div class="feature"><span class="feature-title">AI-native protocol</span><p class="feature-desc">Purpose-built framing for inference payloads — streaming tokens, batched embeddings, large context chunking.</p></div>
+        <div class="feature"><span class="feature-title">Autonomous failover</span><p class="feature-desc">Self-healing topology detects failures within 200 ms and reroutes traffic automatically.</p></div>
+      </div>
+    </div>
+  </div>
 
-    // Countdown timer — target 90 days from now
-    const target = new Date();
-    target.setDate(target.getDate() + 90);
+  <div class="section">
+    <div class="section-aside">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Peering</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Region</th><th>Interconnect</th><th>Capacity</th><th>Protocol</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>EU West</td><td class="tdsoft">AMS-IX Amsterdam</td><td>400 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+          <tr><td>US East</td><td class="tdsoft">NYIIX New York</td><td>600 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+          <tr><td>US West</td><td class="tdsoft">SFIX San Jose</td><td>200 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+          <tr><td>APAC</td><td class="tdsoft">HKIX Hong Kong</td><td>300 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+          <tr><td>SEA</td><td class="tdsoft">SGIX Singapore</td><td>200 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:24px"><span class="btn" onclick="navigate('peering')">View full peering policy →</span></div>
+    </div>
+  </div>
 
-    function updateCountdown() {
-      const now = new Date();
-      const diff = target - now;
-      if (diff <= 0) return;
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      document.getElementById('days').textContent = String(d).padStart(2, '0');
-      document.getElementById('hours').textContent = String(h).padStart(2, '0');
-      document.getElementById('minutes').textContent = String(m).padStart(2, '0');
-      document.getElementById('seconds').textContent = String(s).padStart(2, '0');
-    }
+  <div class="section">
+    <div class="section-aside">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Integration</h2>
+    </div>
+    <div class="section-body">
+      <p style="font-size:13px;color:var(--soft);line-height:1.8;max-width:480px;margin-bottom:0">Aeplo Cloud connects via node certificate authentication, routed through the nearest gateway cluster. Full documentation with SDK examples available in the docs.</p>
+      <div class="code-wrap">
+        <span class="code-label">aeplo-upstream.yaml</span>
+        <pre><span class="cm"># aileverage.network — Aeplo Cloud upstream config</span>
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+<span class="ck">upstream</span>:
+  <span class="ck">provider</span>:         <span class="cs">"aileverage.network"</span>
+  <span class="ck">gateway</span>:          <span class="cs">"gw.aileverage.network:9443"</span>
+  <span class="ck">auth</span>:
+    <span class="ck">mode</span>:             <span class="cs">"mtls"</span>
+    <span class="ck">cert</span>:             <span class="cs">"/etc/aeplo/peer.crt"</span>
+    <span class="ck">key</span>:              <span class="cs">"/etc/aeplo/peer.key"</span>
+  <span class="ck">routing</span>:
+    <span class="ck">strategy</span>:         <span class="cs">"latency-first"</span>
+    <span class="ck">regions</span>:          [<span class="cs">"eu-west"</span>, <span class="cs">"us-east"</span>]
+  <span class="ck">protocol</span>:         <span class="cs">"aln/2.1"</span>
+  <span class="ck">max_batch_size</span>:   <span class="cv">128</span>
+  <span class="ck">keepalive</span>:        <span class="cs">"30s"</span></pre>
+      </div>
+      <div style="margin-top:16px"><span class="btn" onclick="navigate('docs')">Full integration guide →</span></div>
+    </div>
+  </div>
 
-    // Form submit
-    function handleSubmit() {
-      const input = document.getElementById('email-input');
-      if (!input.value || !input.value.includes('@')) {
-        input.style.borderBottom = '1px solid rgba(201,168,76,0.5)';
-        input.focus();
-        return;
-      }
-      document.querySelector('.form-row').style.display = 'none';
-      document.getElementById('formNote').style.display = 'none';
-      const msg = document.getElementById('successMsg');
-      msg.classList.add('visible');
-    }
+  <div class="section" style="border-bottom:none">
+    <div class="section-aside">
+      <span class="section-num">04</span>
+      <h2 class="section-title">SLA</h2>
+    </div>
+    <div class="section-body">
+      <div class="sla-grid">
+        <div class="sla-item"><span class="sla-val">99.99%</span><span class="sla-label">Core uptime</span></div>
+        <div class="sla-item"><span class="sla-val">&lt;15 ms</span><span class="sla-label">P99 relay latency</span></div>
+        <div class="sla-item"><span class="sla-val">200 ms</span><span class="sla-label">Max failover</span></div>
+        <div class="sla-item"><span class="sla-val">24/7</span><span class="sla-label">NOC support</span></div>
+      </div>
+    </div>
+  </div>
+  `;
+}
 
-    document.getElementById('email-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') handleSubmit();
+function pageDocs() {
+  return `
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <div class="docs-sidebar-group">
+        <span class="docs-sidebar-label">Getting started</span>
+        <a class="docs-sidebar-link active" href="#">Introduction</a>
+        <a class="docs-sidebar-link" href="#">Quick start</a>
+        <a class="docs-sidebar-link" href="#">Authentication</a>
+        <a class="docs-sidebar-link" href="#">Your first connection</a>
+      </div>
+      <div class="docs-sidebar-group">
+        <span class="docs-sidebar-label">Protocol</span>
+        <a class="docs-sidebar-link" href="#">ALN protocol v2.1</a>
+        <a class="docs-sidebar-link" href="#">Message framing</a>
+        <a class="docs-sidebar-link" href="#">Streaming tokens</a>
+        <a class="docs-sidebar-link" href="#">Batched embeddings</a>
+        <a class="docs-sidebar-link" href="#">Error codes</a>
+      </div>
+      <div class="docs-sidebar-group">
+        <span class="docs-sidebar-label">Configuration</span>
+        <a class="docs-sidebar-link" href="#">Routing strategies</a>
+        <a class="docs-sidebar-link" href="#">Region selection</a>
+        <a class="docs-sidebar-link" href="#">Capacity limits</a>
+        <a class="docs-sidebar-link" href="#">Keepalive & timeouts</a>
+      </div>
+      <div class="docs-sidebar-group">
+        <span class="docs-sidebar-label">Operations</span>
+        <a class="docs-sidebar-link" href="#">Monitoring</a>
+        <a class="docs-sidebar-link" href="#">Failover behavior</a>
+        <a class="docs-sidebar-link" href="#">Certificate rotation</a>
+        <a class="docs-sidebar-link" href="#">Upgrading</a>
+      </div>
+      <div class="docs-sidebar-group">
+        <span class="docs-sidebar-label">Reference</span>
+        <a class="docs-sidebar-link" href="#">Config schema</a>
+        <a class="docs-sidebar-link" href="#">Metrics & telemetry</a>
+        <a class="docs-sidebar-link" href="#">Changelog</a>
+      </div>
+    </aside>
+
+    <div class="docs-content">
+      <h1>Introduction</h1>
+      <p class="tagline">aileverage.network is the upstream P2P network layer that Aeplo Cloud routes all AI inference workloads through. This documentation covers everything needed to connect, configure, and operate the integration.</p>
+
+      <h2>What is aileverage.network?</h2>
+      <p>aileverage.network is a purpose-built peer-to-peer mesh network designed for AI inference workloads. Rather than routing traffic through centralised infrastructure, it distributes requests across a globally distributed set of authenticated peer nodes, selecting routes based on latency, available capacity, and workload type.</p>
+      <p>Aeplo Cloud sits in the consumer tier of this network. Every inference request — whether for token generation, embedding computation, or multimodal processing — passes through the AI Leverage Gateway before being distributed across the mesh to an appropriate endpoint.</p>
+
+      <div class="callout">
+        <div class="callout-label">Note</div>
+        <p>aileverage.network is private infrastructure exclusively for Aeplo Cloud. This documentation is intended for Aeplo Cloud operators and infrastructure engineers.</p>
+      </div>
+
+      <h2>Architecture overview</h2>
+      <p>The network has three logical tiers:</p>
+      <ol>
+        <li><strong>Consumer tier</strong> — Aeplo Cloud. Initiates requests, holds peer certificates, configures routing preferences.</li>
+        <li><strong>Gateway tier</strong> — The AI Leverage Gateway cluster. Authenticates consumers, applies routing policy, manages session state.</li>
+        <li><strong>Mesh tier</strong> — The P2P core. Distributed peer nodes that relay and serve inference requests. Self-healing, capacity-aware, globally distributed.</li>
+      </ol>
+
+      <h2>Protocol</h2>
+      <p>All communication uses the AI Leverage Network protocol (<span class="inline-code">ALN v2.1</span>), built on QUIC for transport. ALN provides:</p>
+      <ul>
+        <li>Multiplexed streams for concurrent inference requests</li>
+        <li>First-class streaming token support with backpressure</li>
+        <li>Batched embedding requests with result ordering guarantees</li>
+        <li>Structured error payloads with retryability hints</li>
+        <li>Built-in telemetry framing for latency and capacity metrics</li>
+      </ul>
+
+      <h2>Quick start</h2>
+      <p>To connect Aeplo Cloud to aileverage.network, you need a peer certificate issued by the AI Leverage CA and a valid configuration file.</p>
+
+      <h3>Step 1 — Obtain peer credentials</h3>
+      <p>Contact the AI Leverage NOC to receive your <span class="inline-code">peer.crt</span> and <span class="inline-code">peer.key</span>. Certificates are issued per-deployment and rotate every 90 days.</p>
+
+      <h3>Step 2 — Install the gateway agent</h3>
+      <div class="code-wrap">
+        <span class="code-label">Shell</span>
+        <pre><span class="cm"># Install the ALN gateway agent</span>
+curl -sSL https://install.aileverage.network/agent | sh
+
+<span class="cm"># Verify installation</span>
+aln-agent --version
+<span class="cs">aln-agent 2.1.4</span></pre>
+      </div>
+
+      <h3>Step 3 — Configure the connection</h3>
+      <div class="code-wrap">
+        <span class="code-label">aeplo-upstream.yaml</span>
+        <pre><span class="ck">upstream</span>:
+  <span class="ck">provider</span>:         <span class="cs">"aileverage.network"</span>
+  <span class="ck">gateway</span>:          <span class="cs">"gw.aileverage.network:9443"</span>
+  <span class="ck">auth</span>:
+    <span class="ck">mode</span>:             <span class="cs">"mtls"</span>
+    <span class="ck">cert</span>:             <span class="cs">"/etc/aeplo/peer.crt"</span>
+    <span class="ck">key</span>:              <span class="cs">"/etc/aeplo/peer.key"</span>
+  <span class="ck">routing</span>:
+    <span class="ck">strategy</span>:         <span class="cs">"latency-first"</span>
+    <span class="ck">fallback</span>:         <span class="cs">"capacity-weighted"</span>
+    <span class="ck">regions</span>:          [<span class="cs">"eu-west"</span>, <span class="cs">"us-east"</span>]
+  <span class="ck">protocol</span>:         <span class="cs">"aln/2.1"</span>
+  <span class="ck">max_batch_size</span>:   <span class="cv">128</span>
+  <span class="ck">keepalive</span>:        <span class="cs">"30s"</span>
+  <span class="ck">timeout</span>:          <span class="cs">"10s"</span></pre>
+      </div>
+
+      <h3>Step 4 — Start and verify</h3>
+      <div class="code-wrap">
+        <span class="code-label">Shell</span>
+        <pre><span class="cm"># Start the agent</span>
+aln-agent start --config /etc/aeplo/upstream.yaml
+
+<span class="cm"># Check connection status</span>
+aln-agent status
+<span class="cs">✓ Connected to gw.aileverage.network:9443
+✓ Peer authenticated (cert expires 2026-06-01)
+✓ Active routes: eu-west (11ms), us-east (34ms)
+✓ Throughput: 2.1 Gbps ↑ / 8.4 Gbps ↓</span></pre>
+      </div>
+
+      <h2>Routing strategies</h2>
+      <p>Three routing strategies are available:</p>
+      <ul>
+        <li><span class="inline-code">latency-first</span> — Routes to the peer node with the lowest observed round-trip time. Recommended for interactive inference.</li>
+        <li><span class="inline-code">capacity-weighted</span> — Routes proportionally to available node capacity. Recommended for batch workloads.</li>
+        <li><span class="inline-code">region-pinned</span> — Routes exclusively to nodes in specified regions. Use when data residency requirements apply.</li>
+      </ul>
+
+      <h2>Failover</h2>
+      <p>The mesh detects node failures within 200 ms and reroutes in-flight requests automatically. No configuration is required. For requests mid-stream, the protocol supports seamless handoff: the receiving node continues from the last acknowledged token, with no loss of context.</p>
+      <p>If all nodes in a preferred region become unavailable, routing automatically falls back to the next closest region as defined by the <span class="inline-code">fallback</span> strategy. Fallback events are reported in telemetry.</p>
+
+      <h2>Telemetry</h2>
+      <p>The agent exposes a Prometheus-compatible metrics endpoint at <span class="inline-code">localhost:9090/metrics</span> by default. Key metrics include:</p>
+      <ul>
+        <li><span class="inline-code">aln_request_latency_ms</span> — Histogram of end-to-end request latencies</li>
+        <li><span class="inline-code">aln_active_connections</span> — Number of active peer connections</li>
+        <li><span class="inline-code">aln_throughput_bytes</span> — Bytes transferred, labelled by direction</li>
+        <li><span class="inline-code">aln_failover_total</span> — Count of failover events by region</li>
+        <li><span class="inline-code">aln_cert_expiry_seconds</span> — Time until peer certificate expiry</li>
+      </ul>
+    </div>
+  </div>
+  `;
+}
+
+function pageStatus() {
+  function ticks(pattern) {
+    return pattern.map(t => `<div class="uptime-tick ${t}"></div>`).join('');
+  }
+  const allOk = Array(60).fill('ok');
+  const mostlyOk = [...Array(58).fill('ok'), 'warn', 'ok'];
+  const incident = [...Array(55).fill('ok'), 'warn', 'warn', 'down', 'warn', 'ok'];
+
+  return `
+  <div class="hero hero-full">
+    <h1>Network status</h1>
+    <p class="hero-desc">Real-time operational status of all aileverage.network systems and infrastructure. Updated every 60 seconds.</p>
+  </div>
+
+  <div class="stats stats-4">
+    <div class="stat"><span class="stat-val">99.997%</span><span class="stat-label">30-day uptime</span></div>
+    <div class="stat"><span class="stat-val">11 ms</span><span class="stat-label">P99 latency (live)</span></div>
+    <div class="stat"><span class="stat-val">0</span><span class="stat-label">Active incidents</span></div>
+    <div class="stat"><span class="stat-val">847</span><span class="stat-label">Nodes online</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-aside">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Core systems</h2>
+    </div>
+    <div class="section-body">
+      <div class="status-grid">
+        <div class="status-row">
+          <div>
+            <div class="status-name">P2P Core Mesh</div>
+            <div class="status-region">All regions</div>
+            <div class="uptime-bar">${ticks(allOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+        <div class="status-row">
+          <div>
+            <div class="status-name">AI Leverage Gateway</div>
+            <div class="status-region">EU West · US East · APAC</div>
+            <div class="uptime-bar">${ticks(allOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+        <div class="status-row">
+          <div>
+            <div class="status-name">Routing Engine</div>
+            <div class="status-region">Global</div>
+            <div class="uptime-bar">${ticks(mostlyOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+        <div class="status-row">
+          <div>
+            <div class="status-name">Certificate Authority</div>
+            <div class="status-region">Distributed</div>
+            <div class="uptime-bar">${ticks(allOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+        <div class="status-row">
+          <div>
+            <div class="status-name">Telemetry & Metrics</div>
+            <div class="status-region">Global</div>
+            <div class="uptime-bar">${ticks(allOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-aside">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Regions</h2>
+    </div>
+    <div class="section-body">
+      <div class="status-grid">
+        <div class="status-row">
+          <div>
+            <div class="status-name">EU West — AMS-IX Amsterdam</div>
+            <div class="status-region">Primary · 11ms P99</div>
+            <div class="uptime-bar">${ticks(allOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+        <div class="status-row">
+          <div>
+            <div class="status-name">US East — NYIIX New York</div>
+            <div class="status-region">Primary · 34ms P99</div>
+            <div class="uptime-bar">${ticks(allOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+        <div class="status-row">
+          <div>
+            <div class="status-name">US West — SFIX San Jose</div>
+            <div class="status-region">Secondary · 52ms P99</div>
+            <div class="uptime-bar">${ticks(mostlyOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+        <div class="status-row">
+          <div>
+            <div class="status-name">APAC — HKIX Hong Kong</div>
+            <div class="status-region">Primary · 28ms P99</div>
+            <div class="uptime-bar">${ticks(allOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+        <div class="status-row">
+          <div>
+            <div class="status-name">SEA — SGIX Singapore</div>
+            <div class="status-region">Secondary · 44ms P99</div>
+            <div class="uptime-bar">${ticks(allOk)}</div>
+          </div>
+          <span class="status-pill pill-green">Operational</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="border-bottom:none">
+    <div class="section-aside">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Incident history</h2>
+    </div>
+    <div class="section-body">
+      <div class="incident-list">
+        <div class="incident">
+          <div class="incident-date">Resolved · Feb 14 2026</div>
+          <div class="incident-title">Elevated latency in US-West region</div>
+          <div class="incident-body">A BGP route flap at SFIX caused a 4-minute window of elevated P99 latency (peak 210ms) in the US-West region. Traffic was automatically rerouted to US-East. Root cause: upstream ISP maintenance without prior notice. No data loss. Mitigation: added secondary BGP peer for SFIX interconnect.</div>
+        </div>
+        <div class="incident">
+          <div class="incident-date">Resolved · Jan 28 2026</div>
+          <div class="incident-title">Certificate rotation delay — EU West</div>
+          <div class="incident-body">Automated certificate rotation for a subset of EU-West peer nodes was delayed by 8 minutes due to a race condition in the rotation coordinator. Affected 12 nodes temporarily. No consumer-visible impact; affected nodes were excluded from routing during the rotation window. Fix deployed in coordinator v1.9.2.</div>
+        </div>
+        <div class="incident">
+          <div class="incident-date">Resolved · Jan 9 2026</div>
+          <div class="incident-title">Planned maintenance — Core mesh upgrade to ALN 2.1</div>
+          <div class="incident-body">Scheduled rolling upgrade of the P2P core mesh to ALN protocol version 2.1. Completed within the 2-hour maintenance window with zero consumer impact. All nodes successfully upgraded and validated.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function pagePeering() {
+  return `
+  <div class="hero hero-full">
+    <h1>Peering policy</h1>
+    <p class="hero-desc">aileverage.network operates a selective peering policy focused on high-quality, low-latency interconnection with partners who share our commitment to network reliability.</p>
+  </div>
+
+  <div class="stats stats-4">
+    <div class="stat"><span class="stat-val">5</span><span class="stat-label">Interconnect points</span></div>
+    <div class="stat"><span class="stat-val">1.7 Tbps</span><span class="stat-label">Total peering capacity</span></div>
+    <div class="stat"><span class="stat-val">BGP / QUIC</span><span class="stat-label">Transport protocol</span></div>
+    <div class="stat"><span class="stat-val">Open</span><span class="stat-label">Peering policy</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-aside">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Current peers</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Region</th>
+            <th>Exchange</th>
+            <th>Location</th>
+            <th>Capacity</th>
+            <th>Protocol</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>EU West</td><td class="tdsoft">AMS-IX</td><td class="tdsoft">Amsterdam, NL</td><td>400 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+          <tr><td>US East</td><td class="tdsoft">NYIIX</td><td class="tdsoft">New York, US</td><td>600 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+          <tr><td>US West</td><td class="tdsoft">SFIX</td><td class="tdsoft">San Jose, US</td><td>200 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+          <tr><td>APAC</td><td class="tdsoft">HKIX</td><td class="tdsoft">Hong Kong</td><td>300 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+          <tr><td>SEA</td><td class="tdsoft">SGIX</td><td class="tdsoft">Singapore</td><td>200 Gbps</td><td class="tdsoft">BGP / QUIC</td><td><span class="status-cell"><span class="dot"></span>Active</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-aside">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Requirements</h2>
+    </div>
+    <div class="section-body">
+      <p class="peering-intro">Prospective peers must meet the following technical and operational requirements. These are minimum requirements — not all applicants meeting these requirements will be accepted.</p>
+      <div class="peering-section">
+        <h3>Technical requirements</h3>
+        <div class="req-list">
+          <div class="req-item"><span class="req-label">ASN</span><span class="req-val">Publicly routable ASN registered with a recognised RIR (ARIN, RIPE, APNIC, LACNIC, AFRINIC)</span></div>
+          <div class="req-item"><span class="req-label">Minimum capacity</span><span class="req-val">10 Gbps at point of interconnection</span></div>
+          <div class="req-item"><span class="req-label">Protocol</span><span class="req-val">BGP-4 with IPv4 and IPv6 dual-stack support</span></div>
+          <div class="req-item"><span class="req-label">Route filtering</span><span class="req-val">IRR-based prefix filtering required. RPKI ROA validation strongly recommended</span></div>
+          <div class="req-item"><span class="req-label">NOC</span><span class="req-val">24/7 Network Operations Centre reachable by email and phone</span></div>
+          <div class="req-item"><span class="req-label">Uptime</span><span class="req-val">Demonstrated 99.9% or greater monthly uptime over the prior 6 months</span></div>
+          <div class="req-item"><span class="req-label">Latency SLA</span><span class="req-val">Able to commit to P95 latency ≤ 20ms within region</span></div>
+        </div>
+      </div>
+      <div class="peering-section">
+        <h3>Operational requirements</h3>
+        <div class="req-list">
+          <div class="req-item"><span class="req-label">Maintenance windows</span><span class="req-val">72-hour advance notice for planned maintenance affecting peering sessions</span></div>
+          <div class="req-item"><span class="req-label">Incident comms</span><span class="req-val">Incident notification within 15 minutes of detection; post-mortem within 5 business days</span></div>
+          <div class="req-item"><span class="req-label">Contact</span><span class="req-val">Designated technical contact and escalation path maintained at all times</span></div>
+          <div class="req-item"><span class="req-label">Traffic ratio</span><span class="req-val">Approximate traffic ratio (send:receive) must remain within 5:1 over any 30-day period</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-aside">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Policy details</h2>
+    </div>
+    <div class="section-body">
+      <div class="prose">
+        <h3>Route announcement</h3>
+        <p>aileverage.network announces only its own prefixes to peers. Transit is not provided. Peers must similarly announce only their own prefixes and those of their customers.</p>
+        <p>We reserve the right to filter any announced prefix that is not registered in an IRR database or that lacks a valid RPKI ROA. Prefixes more specific than /24 (IPv4) or /48 (IPv6) will not be accepted.</p>
+
+        <h3>Traffic settlement</h3>
+        <p>All peering is conducted on a settlement-free basis. No payment is made or received for traffic exchanged at mutual peering points, provided traffic ratios remain within acceptable bounds as defined above.</p>
+
+        <h3>Security</h3>
+        <p>All peer sessions use BGP-SEC where supported. We operate MANRS-compliant networks and expect peers to adhere to the same standards. Peers found to be the source of malicious traffic — including spoofed source addresses, DDoS amplification, or route hijacks — will have their sessions terminated immediately.</p>
+
+        <h3>Applying to peer</h3>
+        <p>Send peering requests to <strong>peering@aileverage.network</strong> with your ASN, PeeringDB entry, and preferred interconnect locations. We review applications within 5 business days.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="border-bottom:none">
+    <div class="section-aside">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Planned expansion</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead>
+          <tr><th>Region</th><th>Exchange</th><th>Target capacity</th><th>Timeline</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>EU Central</td><td class="tdsoft">DE-CIX Frankfurt</td><td>400 Gbps</td><td class="tdsoft">Q2 2026</td></tr>
+          <tr><td>UK</td><td class="tdsoft">LINX London</td><td>200 Gbps</td><td class="tdsoft">Q2 2026</td></tr>
+          <tr><td>Japan</td><td class="tdsoft">JPIX Tokyo</td><td>200 Gbps</td><td class="tdsoft">Q3 2026</td></tr>
+          <tr><td>India</td><td class="tdsoft">NIXI Mumbai</td><td>100 Gbps</td><td class="tdsoft">Q4 2026</td></tr>
+          <tr><td>Brazil</td><td class="tdsoft">IX.br São Paulo</td><td>100 Gbps</td><td class="tdsoft">Q4 2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  `;
+}
+
+function pageAbout() {
+  return `
+  <div class="hero">
+    <div class="hero-left">
+      <h1>Built for<br><em>AI infrastructure</em><br>at scale</h1>
+    </div>
+    <div class="hero-right">
+      <p class="hero-desc">aileverage.network was created to solve a specific problem: AI inference workloads have fundamentally different network characteristics than traditional web traffic, and general-purpose CDNs and transit providers weren't designed for them.</p>
+      <p class="hero-desc">We built a network from the ground up — protocol, routing, peering — optimised for the patterns that matter in AI: large context windows, streaming outputs, batch embeddings, and the need for consistent low latency at high throughput.</p>
+    </div>
+  </div>
+
+  <div class="stats stats-3">
+    <div class="stat"><span class="stat-val">2023</span><span class="stat-label">Founded</span></div>
+    <div class="stat"><span class="stat-val">38</span><span class="stat-label">Team members</span></div>
+    <div class="stat"><span class="stat-val">23</span><span class="stat-label">Regions served</span></div>
+  </div>
+
+  <div class="about-grid" style="border-top:1px solid var(--rule)">
+    <div class="about-block">
+      <h3>Why P2P?</h3>
+      <p>Centralised gateway architectures create bottlenecks that are difficult to scale when AI workloads demand consistent throughput across unpredictable request sizes. A P2P mesh adapts dynamically — capacity is wherever nodes are, and routing responds to real-time conditions rather than static configurations.</p>
+    </div>
+    <div class="about-block">
+      <h3>Protocol design</h3>
+      <p>The AI Leverage Network protocol (ALN) was designed with token streaming as a first-class primitive, not an afterthought. This means lower time-to-first-token, better backpressure handling, and seamless recovery from node failures mid-stream — things that retrofitting HTTP/2 or WebSocket protocols cannot cleanly provide.</p>
+    </div>
+    <div class="about-block">
+      <h3>Security model</h3>
+      <p>Zero-trust is not a marketing term here — it describes the actual architecture. No node in the mesh trusts any other without a valid, CA-signed certificate. Sessions are authenticated at connection time and continuously validated. Compromised nodes are isolated within seconds of detection.</p>
+    </div>
+    <div class="about-block">
+      <h3>Our relationship with Aeplo</h3>
+      <p>Aeplo Cloud is our founding downstream partner. We built the initial mesh in collaboration with the Aeplo infrastructure team, and Aeplo remains the primary consumer of the network. The partnership has shaped every protocol decision — we treat Aeplo's operational requirements as our own.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-aside">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Team</h2>
+    </div>
+    <div class="section-body">
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="team-avatar">◈</div>
+          <div class="team-name">Lena Voss</div>
+          <div class="team-role">Co-founder & CEO</div>
+          <div class="team-bio">Previously infrastructure lead at a major hyperscaler. 15 years building distributed systems. Designed the original ALN protocol specification.</div>
+        </div>
+        <div class="team-member">
+          <div class="team-avatar">⬡</div>
+          <div class="team-name">Kenji Nakamura</div>
+          <div class="team-role">Co-founder & CTO</div>
+          <div class="team-bio">PhD in distributed systems from ETH Zürich. Former QUIC working group contributor. Leads protocol engineering and the core mesh team.</div>
+        </div>
+        <div class="team-member">
+          <div class="team-avatar">∿</div>
+          <div class="team-name">Priya Mehta</div>
+          <div class="team-role">VP Network Engineering</div>
+          <div class="team-bio">Built and operated multi-Tbps networks at two previous companies. Manages all peering relationships and interconnect strategy.</div>
+        </div>
+        <div class="team-member">
+          <div class="team-avatar">⊛</div>
+          <div class="team-name">Marcus Delacroix</div>
+          <div class="team-role">Head of Security</div>
+          <div class="team-bio">15 years in network security. Led the design of the zero-trust node authentication model and the certificate authority architecture.</div>
+        </div>
+        <div class="team-member">
+          <div class="team-avatar">⟁</div>
+          <div class="team-name">Soo-Jin Park</div>
+          <div class="team-role">Head of Operations</div>
+          <div class="team-bio">Runs the 24/7 NOC and operational runbook. Previously managed global ops for a major IXP. Obsessed with sub-second incident response.</div>
+        </div>
+        <div class="team-member">
+          <div class="team-avatar">◉</div>
+          <div class="team-name">Tomás Reyes</div>
+          <div class="team-role">Partner Engineering</div>
+          <div class="team-bio">Manages the technical relationship with Aeplo Cloud and all downstream integration partners. Former solutions architect for cloud networking products.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="border-bottom:none">
+    <div class="section-aside">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Contact</h2>
+    </div>
+    <div class="section-body">
+      <div class="req-list">
+        <div class="req-item"><span class="req-label">General</span><span class="req-val">hello@aileverage.network</span></div>
+        <div class="req-item"><span class="req-label">Network NOC</span><span class="req-val">noc@aileverage.network · +1 (415) 000-0000</span></div>
+        <div class="req-item"><span class="req-label">Peering</span><span class="req-val">peering@aileverage.network</span></div>
+        <div class="req-item"><span class="req-label">Security</span><span class="req-val">security@aileverage.network (PGP key available on request)</span></div>
+        <div class="req-item"><span class="req-label">PeeringDB</span><span class="req-val">peeringdb.com/net/12345</span></div>
+        <div class="req-item"><span class="req-label">ASN</span><span class="req-val">AS401234</span></div>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+// ── ROUTER ──────────────────────────────────────────────────
+
+const pages = { home: pageHome, docs: pageDocs, status: pageStatus, peering: pagePeering, about: pageAbout };
+
+function navigate(page) {
+  const app = document.getElementById('app');
+  app.style.opacity = '0';
+  setTimeout(() => {
+    app.innerHTML = pages[page] ? pages[page]() : pageHome();
+    app.style.animation = 'none';
+    requestAnimationFrame(() => {
+      app.style.animation = 'fadeIn 0.2s ease';
+      app.style.opacity = '1';
     });
-  </script>
+    window.scrollTo(0, 0);
+  }, 100);
+
+  document.querySelectorAll('.nav-link').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+}
+
+// Init
+navigate('home');
+</script>
 </body>
 </html>
